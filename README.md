@@ -60,15 +60,25 @@ The PaddlePaddle development version is required, and user can choose the approp
  
 **d. Start simulation**
  
-    
+   Before starting simulaiton, the working directory must be confirmed, and execute`cd ./examples/cylinder/2d_unsteady_continuous/`after changing directory to PaddleSciece.  
    **-Loading data**
    
-   
    The trainning data and supervised data are obtained from openFoam that need to be loaded before simulation. User can change the data file in datasets.
+   The dataset is stored on a remote server, so user should download datasets firstly.
+
+    !python download_dataset.py
+   
+   After loading datasets, user can use these data for training the model.
 
     # Loading data from openfoam 
-    path = './examples/cylinder/2D_unsteady/datasets/'
-    dataloader = cfd.DataLoader(path=path, N_f=9000, N_b=1000, time_start=1, time_end=50, time_nsteps=50)
+    path = './datasets/'
+    dataloader = cfd.DataLoader(
+        path=path,
+        N_f=9000,
+        N_b=1000,
+        time_start=1,
+        time_end=50,
+        time_nsteps=50)
     training_time_list = dataloader.select_discretized_time(num_time=30)
     
    **-Define fluid properties**
@@ -116,19 +126,20 @@ The PaddlePaddle development version is required, and user can choose the approp
    **-Training Model**
    
    
-   This use case has provided the pre-trained network and saved it in the checkpoint folder. The pre-trained network can be trained continuously when defining ` net_params = './examples/cylinder/2D_unsteady/checkpoint/pretrained_net_params'` in cylinder2d_unsteady_train.py. If ` net_params = None`，a new training process is about to begin.
+   This use case has provided the pre-trained network and saved it in the checkpoint folder. The pre-trained network can be trained continuously when defining ` net_params = './checkpoint/pretrained_net_params'` in cylinder2d_unsteady_train.py. If ` net_params = None`，a new training process is about to begin.
       
-    net_params = './examples/cylinder/2D_unsteady/checkpoint/pretrained_net_params'
+    net_params = './checkpoint/pretrained_net_params'
     train(net_params=net_params)
    
    **-Predictint Model**
    
    
-   After the training, the optimal network will be generated and saved in checkpoint. Selecting the network and execute`python cylinder2d_unsteady_train.py`.
+   After the training, the optimal network will be generated and saved in checkpoint. Creating 
+   Selecting the network and execute`!python cylinder2d_unsteady_train.py`.
    vtk files are generated and saved in vtk folder during predicting. These *vtu* files can be displayed in [Paraview](https://www.paraview.org/).
 
     if __name__ == "__main__":
-        net_params = './examples/cylinder/2D_unsteady/checkpoint/pretrained_net_params'
-        vtk_filename = './examples/cylinder/2D_unsteady/vtk/uvp_t_'
+        net_params = './checkpoint/pretrained_net_params'
+        vtk_filename = './vtk/uvp_t_'
         predict_once_for_all(net_params=net_params, vtk_filename=vtk_filename)
 
