@@ -4,21 +4,21 @@ This guide introduces to how to build a simple VIV model with PINNs in PaddleSci
 
 
 ## Use case introduction
-The current model is a typical inverse problem application, and the VIV system is equivalent to a one-dimensional spring-damper system,as figure below.
+This use case is a typical inverse problem application. The VIV system is equivalent to a one-dimensional spring-damper system shown as below. 
 
 <div align="center">
 <img src="image/VIV_1D_SpringDamper.png" width = "400" align=center />
 </div>
 
 
-The governing equation is as follows, and *λ1* and *λ2* represent the natural damping and stiffness of the structure, *ρ* is mass. In this inverse problem, getting the value of *λ1* and *λ2* makes our goal. 
+The governing equation is shown as following, and *λ1* and *λ2* represent the natural damping and stiffness of the structure respectively, *ρ* is mass. The aim of this problem is to find *λ1* and *λ2*.
 <div align="center">
 <img src="image/VIV_eq.png" width = "200" align=center />
 </div>
 
-In order to verify the correctness of the inverse problem based on PINNS, the real values of stiffness and damping of the system are obtained in advance（*λ1=0，λ2=1.093*）. Comparing the stiffness and damping predicted by the model with the real value, if the relative error is less than 5%, we believe that the model can well simulate the one-dimensional vibration phenomenon of VIV and predict the physical properties of the unknown structure, such as some compicated structure.
+In order to verify the feasibility of PINNs method in solving inverse problem, the truth values of stiffness and damping of the system need to be obtained first（*λ1=0，λ2=1.093*）. Comparing the stiffness and damping predicted by the model with the truth value, the relative error is less than 5% which inidicates that the model can well simulate the one-dimensional vibration phenomenon of VIV and can predict the physical properties of the unknown structure, such as some complicated structure.
 
-This model assumes a constant reduction velocity `Ur=8.5（Ur=u/(fn*d))`, corresponding to `Re=500`. The lateral amplitude of cylinder vibration(*η*) caused by the velocity fluid flowing through the cylinder and the corresponding lift force（*f*） are recorded. These known data serve as the monitoring data of the training neural network and  are combined with the governing equation to form the total loss of the net.
+This model assumes constant reduction velocity is `Ur=8.5（Ur=u/(fn*d))` corresponding to `Re=500`. The lateral amplitude of cylinder vibration(*η*) caused by the velocity fluid passing over the cylinder and the corresponding lift force（*f*） are given in this problem. We laveraged these data as supervised data for the training process. Based on that, the loss funcion is formulated combined with the governing equations. 
 
 ## How to run this model
 
@@ -26,14 +26,14 @@ This model assumes a constant reduction velocity `Ur=8.5（Ur=u/(fn*d))`, corres
 
 **Install PaddlePaddle**
 
-The PaddlePaddle development version is required, and user can choose the appropriate version based on simulating platform(such as in linux os and cuda10.1 platform, `python -m pip install paddlepaddle-gpu==0.0.0.post101 -f https://www.paddlepaddle.org.cn/whl/linux/gpu/develop.html` can be used for installing) on the [PaddlePaddle](https://www.paddlepaddle.org.cn/install/quick?docurl=/documentation/docs/zh/develop/install/pip/linux-pip.html) 
+The PaddlePaddle development version need to be installed in this problem. User can choose the appropriate version based on simulating platform (such as in linux os and cuda10.1 platform, `python -m pip install paddlepaddle-gpu==0.0.0.post101 -f https://www.paddlepaddle.org.cn/whl/linux/gpu/develop.html` can be used for installing) on the [PaddlePaddle](https://www.paddlepaddle.org.cn/install/quick?docurl=/documentation/docs/zh/develop/install/pip/linux-pip.html) 
 
 **Download PaddleScience code**
  
         
    - Confirm working directory
         
-   - Downlaod paddlescience code from  [github](https://github.com/PaddlePaddle/PaddleScience), git clone is also worked by the following code:   
+   - Downlaod paddlescience code from  [github](https://github.com/PaddlePaddle/PaddleScience), git clone also works by the following code:   
         
     git clone https://github.com/PaddlePaddle/PaddleScience.git
 
@@ -56,11 +56,11 @@ The PaddlePaddle development version is required, and user can choose the approp
 
 ### Confirm the governing equation 
 
-The equation needs to be defined, as described earlier.
+The governing equations are defined as mentioned above.
 
 ### Define the Network
 Since only the lateral vibration of the structure is considered and the constant inlet velocity is given, the input of the network is only time(*t*), and the output is the vibration amplitude of the structure.
-Selecting FCNet as the network with 6 layers and 30 neurons for each layer. The NeuralNetwork was defined in file `./examples/fsi/viv_inverse_train.py`as below:
+FCNet is employed as the network with 6 layers and 30 neurons for each layer. The NeuralNetwork was defined in file `./examples/fsi/viv_inverse_train.py`as below:
 
 ```
 PINN = psolver.PysicsInformedNeuralNetwork(layers=6, hidden_size=30, num_ins=1, num_outs=1, 
@@ -68,7 +68,7 @@ PINN = psolver.PysicsInformedNeuralNetwork(layers=6, hidden_size=30, num_ins=1, 
 ```
 
 ### Load data for monitoring
-In this model, *η* and *f* were calculated by CFD tools and saved in *./examples/fsi/VIV_Training.mat* file. Loading data in file`./examples/fsi/viv_inverse_train.py` was as following:
+In this model, *η* and *f* were obtained by CFD tools and saved in *./examples/fsi/VIV_Training.mat* file. Loading data in file`./examples/fsi/viv_inverse_train.py` shown as following:
 
 ```
 t_eta, eta, t_f, f, tmin, tmax = data.build_data()
@@ -89,14 +89,14 @@ def neural_net_equations(self, t, u=None):
 ```     
 
 ### Define the PINN solver
-PINN solver is depicted in `./paddlescience/module/fsi/viv_pinn_solver.py`. In this module, the loss function, autograd and optimizer, training methods are defined in detail. user can change the loss weight for eq and data when training.
+PINN solver is depicted in `./paddlescience/module/fsi/viv_pinn_solver.py`. In this module, the loss function, autograd and optimizer, training methods are defined in detail. Users can modify the loss weight for eq and data during training.
 In this model, the eta_weight and eq_weight are 100 and 1 respectively as default.
 ```
 self.eta_weight = 100
 ```
 
 ### Train network
-After completing the validation and definition mentioned above, Training can be started by executing `python ./examples/fsi/viv_inverse_train.py`
+After completing the validation and definition mentioned above, training process can be executed in `python ./examples/fsi/viv_inverse_train.py`
 
 ```
 # Training
@@ -109,7 +109,7 @@ PINN.train(num_epoch=100000, batchsize=batchsize, optimizer=adm_opt)
 ```
 
 ### Predict Result
-While training, net_params can be saved each 2000 epochs in `./examples/fsi/checkpoint` folder, and the latest net_params can be used to predict the result of traing time range by executing`python ./examples/fsi/viv_inverse_predict.py`. 
+During training process, net_params is saved each 2000 epochs in `./examples/fsi/checkpoint` folder, and the latest net_params is used to predict the result of traing time range by executing`python ./examples/fsi/viv_inverse_predict.py`. 
 
 ```
 net_params = '/examples/fsi/checkpoint/net_params_100000'
