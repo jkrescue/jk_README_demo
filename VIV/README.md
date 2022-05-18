@@ -1,4 +1,4 @@
-# VIV(vortex induced vibration)涡激振动
+# VIV(vortex induced vibration)
 This guide introduces to how to build a simple VIV model with PINNs in PaddleScience.
 
 
