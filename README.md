@@ -1,4 +1,4 @@
-[//]: <> (title: 2D unsteady cylinder flow with continuous time use case tutorial, author: Hui Xiang, Yanbo Zhang, xianghui01@baitongxin at baidu.com)
+[//]: <> (title: 2D unsteady cylinder flow with continuous time use case tutorial, author: Hui Xiang, Yanbo Zhang, xianghui01@baidu.com)
 
 # 2D unsteady cylinder flow
 
