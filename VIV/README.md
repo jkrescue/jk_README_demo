@@ -1,3 +1,5 @@
+[//]: <> (title: VIV use case tutorial, author: Hui Xiang, Yanbo Zhang @xianghui01 at baidu.com)
+
 # VIV(Vortex Induced Vibration)
 This guide introduces to how to build a simple VIV model with PINNs in PaddleScience.
 
