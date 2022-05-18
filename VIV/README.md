@@ -44,7 +44,7 @@ The PaddlePaddle development version need to be installed in this problem. User 
     
    - Rename the folder name as PaddleScience if not
     
-   - Change working directory to PaddleScience
+   - Change working directory to PaddleScience`cd PaddleScience`
     
    - Install dependent libraries by `pip install -r requirements` 
     
@@ -54,6 +54,9 @@ The PaddlePaddle development version need to be installed in this problem. User 
    **-Set environment** 
     
    Setting environment by `%env PYTHONPATH=/user_path*/PaddleScience`, and if editing bash files, using `export PYTHONPATH=$PYTHONPATH:/user_path*/PaddleScience/` instead
+   
+   **-Change working directory**
+   
 
 
 ### Confirm the governing equation 
@@ -62,15 +65,15 @@ The governing equations are defined as mentioned above.
 
 ### Define the Network
 Since only the lateral vibration of the structure is considered and the constant inlet velocity is given, the input of the network is only time(*t*), and the output is the vibration amplitude of the structure.
-FCNet is employed as the network with 6 layers and 30 neurons for each layer. The NeuralNetwork was defined in file `./examples/fsi/viv_inverse_train.py`as below:
+FCNet is employed as the network with 6 layers and 30 neurons for each layer. The NeuralNetwork was defined in file `./viv_inverse_train.py`as below:
 
 ```
 PINN = psolver.PysicsInformedNeuralNetwork(layers=6, hidden_size=30, num_ins=1, num_outs=1, 
-        t_max=tmax, t_min=tmin, N_f=f.shape[0], checkpoint_path='./examples/fsi/checkpoint/', net_params=net_params)
+        t_max=tmax, t_min=tmin, N_f=f.shape[0], checkpoint_path='./checkpoint/', net_params=net_params)
 ```
 
 ### Load data for monitoring
-In this model, *η* and *f* were obtained by CFD tools and saved in *./examples/fsi/VIV_Training.mat* file. Loading data in file`./examples/fsi/viv_inverse_train.py` shown as following:
+In this model, *η* and *f* were obtained by CFD tools and saved in *./VIV_Training.mat* file. Loading data in file`./viv_inverse_train.py` shown as following:
 
 ```
 t_eta, eta, t_f, f, tmin, tmax = data.build_data()
@@ -98,7 +101,7 @@ self.eta_weight = 100
 ```
 
 ### Train network
-After completing the validation and definition mentioned above, training process can be executed in `python ./examples/fsi/viv_inverse_train.py`
+After completing the validation and definition mentioned above, training process can be executed in `python ./viv_inverse_train.py`
 
 ```
 # Training
@@ -111,10 +114,10 @@ PINN.train(num_epoch=100000, batchsize=batchsize, optimizer=adm_opt)
 ```
 
 ### Predict Result
-During training process, net_params is saved each 2000 epochs in `./examples/fsi/checkpoint` folder, and the latest net_params is used to predict the result of traing time range by executing`python ./examples/fsi/viv_inverse_predict.py`. 
+During training process, net_params is saved each 2000 epochs in `./checkpoint` folder, and the latest net_params is used to predict the result of traing time range by executing`python ./viv_inverse_predict.py`. 
 
 ```
-net_params = '/examples/fsi/checkpoint/net_params_100000'
+net_params = '/checkpoint/net_params_100000'
 predict(net_params=net_params)
 ```
 The result is shown as below:
