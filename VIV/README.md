@@ -56,7 +56,7 @@ The PaddlePaddle development version need to be installed in this problem. User 
    Setting environment by `%env PYTHONPATH=/user_path*/PaddleScience`, and if editing bash files, using `export PYTHONPATH=$PYTHONPATH:/user_path*/PaddleScience/` instead
    
    **-Change working directory**
-   
+   Before starting simulaiton, the working directory must be confirmed, and execute`cd ./examples/fsi/`after changing directory to PaddleSciece.  
 
 
 ### Confirm the governing equation 
